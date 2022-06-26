@@ -1,2 +1,2 @@
-# Blog
-Blog Webapplication
+# Laravel 8 Blog
+
