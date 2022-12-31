@@ -6,28 +6,20 @@ use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Collection;
 use App\Models\Tag;
 use App\Models\Category;
-use App\Models\post;
+use App\Models\Post;
 use App\Models\Comment;
 use Auth;
 
 class PostController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
         $posts = Post::orderby('created_at', 'desc')->where('pubstatus', 1)->get();
         return view('Post.index')->withPosts($posts);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function create()
     {   
         $categories = Category::all();
@@ -35,12 +27,7 @@ class PostController extends Controller
         return view('Post.create')->withCategories($categories)->withTags($tags);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+
     public function store(Request $request)
     {
         $this->validate($request,[
@@ -81,24 +68,17 @@ class PostController extends Controller
        $post->publisher_id = Auth::guard('publisher')->user()->id?? null;
        $post->journalist_id = Auth::guard('journalist')->user()->id ?? null;
         
-
-
        $post->save();
-
+        
+       //Attach Tag
        $post->tags()->sync($request->tags);
-
 
        return redirect()->back()->with('success', 'You have added new post name successfully');
 
            
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function show($id)
     {
         $post = post::find($id);
@@ -116,12 +96,7 @@ class PostController extends Controller
         return view('Post.show')->withPost($post)->withCategories($categories)->withTags($tags)->withPosts($posts)->withCounts($counts)->withNews($news)->withRelates($relates)->withComments($comments);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function edit($id)
     {
         
@@ -131,13 +106,6 @@ class PostController extends Controller
         return view('Post.edit')->withPost($post)->withCategories($categories)->withTags($tags);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
         $this->validate($request,[
@@ -188,14 +156,9 @@ class PostController extends Controller
        return redirect()->back()->with('success', 'You have added new post name successfully');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function destroy($id)
     {
-        //
+       
     }
 }
